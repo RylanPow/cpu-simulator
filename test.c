@@ -2,6 +2,7 @@
 #include "registers.h"
 #include "alu.h"
 #include "memory.h"
+#include "loader.h"
 
 void test_alu(uint32_t a, uint32_t b, ALUOp op, const char *name) {
     uint32_t zero;
@@ -29,16 +30,31 @@ int main() {
     // // memory tests
     Memory mem;
     mem_init(&mem, 1024, 65536);
-    uint8_t program[] = {0x12, 0x34, 0x56, 0x78};
-    mem_load_program(&mem, program, sizeof(program));
+    // uint8_t program[] = {0x12, 0x34, 0x56, 0x78};
+    // mem_load_program(&mem, program, sizeof(program));
+
+    // uint32_t pc = 0x00400000;
+    // uint32_t instr = mem_fetch_instruction(&mem, pc);
+    // printf("Instruction at 0x%08X: 0x%08X\n", pc, instr);
+    // mem_write_word(&mem, 0x10010000, 0xDEADBEEF);
+
+    // uint32_t data = mem_read_word(&mem, 0x10010000);
+    // printf("Data at 0x10010000: 0x%08X\n", data);  // Should print 0xDEADBEEF
+    // mem_free(&mem);
+
+    //IMPORTANT: test.bin is raw binary.  use "hexdump -C test.bin" to see hex values
+    if (!load_program(&mem, "test.bin")) {
+        return 1;
+    }
 
     uint32_t pc = 0x00400000;
     uint32_t instr = mem_fetch_instruction(&mem, pc);
-    printf("Instruction at 0x%08X: 0x%08X\n", pc, instr);
-    mem_write_word(&mem, 0x10010000, 0xDEADBEEF);
+    printf("Instruction 1: 0x%08X\n", instr);
 
-    uint32_t data = mem_read_word(&mem, 0x10010000);
-    printf("Data at 0x10010000: 0x%08X\n", data);  // Should print 0xDEADBEEF
+    pc = 0x00400004;
+    instr = mem_fetch_instruction(&mem, pc);
+    printf("Instruction 2: 0x%08X\n", instr);
+
     mem_free(&mem);
 
     return 0;

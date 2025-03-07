@@ -6,7 +6,7 @@
 #define MEMORY_H
 
 #include <stdint.h>
-#include <stdbool.h<
+#include <stddef.h>
 
 typedef struct {
     // instruction memory
@@ -24,7 +24,7 @@ void mem_init(Memory *mem, size_t text_size, size_t data_size);
 
 void mem_free(Memory *mem);
 
-void mem_load_program(Memory *mem, const utint8_t *program, size_t program_bytes);
+void mem_load_program(Memory *mem, const uint8_t *program, size_t program_bytes);
 
 uint32_t mem_fetch_instruction(const Memory *mem, uint32_t pc);
 
@@ -35,3 +35,5 @@ void mem_write_word(Memory *mem, uint32_t addr, uint32_t value);
 // explicit byte and half-word access for convenience
 uint16_t mem_read_half(const Memory *mem, uint32_t addr);
 uint8_t mem_read_byte(const Memory *mem, uint32_t addr);
+
+#endif

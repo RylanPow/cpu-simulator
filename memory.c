@@ -39,7 +39,6 @@ uint32_t mem_fetch_instruction(const Memory *mem, uint32_t pc) {
         return 0;
     uint32_t index = (pc - mem->text_base) / 4;
     return mem->text_mem[index];
-    
 }
 
 uint32_t mem_read_word(const Memory *mem, uint32_t addr) {

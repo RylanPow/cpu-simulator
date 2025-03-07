@@ -36,4 +36,5 @@ void mem_write_word(Memory *mem, uint32_t addr, uint32_t value);
 uint16_t mem_read_half(const Memory *mem, uint32_t addr);
 uint8_t mem_read_byte(const Memory *mem, uint32_t addr);
 
+
 #endif

@@ -10,13 +10,13 @@
 
 typedef struct {
     // instruction memory
-    uint32_t *text_mem;
-    uint32_t text_base; 
+    uint32_t text_base; //starts at 0x00400000
+    uint32_t *text_mem; 
     size_t text_size;
 
     // data memory
+    uint32_t data_base; //starts at 0x10010000
     uint8_t *data_mem;
-    uint32_t data_base;
     size_t data_size;
 } Memory;
 

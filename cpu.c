@@ -3,17 +3,17 @@
 
 void cpu_init(CPU *cpu, size_t text_size, size_t data_size) {
     reg_init(&cpu->regs);
-    mem_init(&cpu->mem, size_t text_size, size_t data_size);
-    cpu->pc = 0x00400000;
+    mem_init(&cpu->mem, text_size, data_size);
+    cpu->pc = 0x00400000; //text segment base
 }
 
-void cpu_free(CPU, *cpu) {
+void cpu_free(CPU *cpu) {
     mem_free(&cpu->mem);
 }
 
 void cpu_step(CPU *cpu) {
     // fetch
-    uint32_t instr = mem_fetch_instruction(&cpu->mem, &cpu->pc);
+    uint32_t instr = mem_fetch_instruction(&cpu->mem, cpu->pc);
     
     // decode
     cpu->ctrl = control_decode(instr);
@@ -29,7 +29,7 @@ void cpu_step(CPU *cpu) {
     int32_t imm_ext = (imm & 0x8000) ? (0xFFFF0000 | imm) : imm;
     
     // read register values
-    uint32_t a = req_read(&cpu->regs, rs);
+    uint32_t a = reg_read(&cpu->regs, rs);
     uint32_t b = reg_read(&cpu->regs, rt);
 
     // execute
@@ -49,7 +49,8 @@ void cpu_step(CPU *cpu) {
 
     // writeback to update register file
     if (cpu->ctrl.RegWrite) {
-        uint8_t dest_reg = (cpu->ctrl.MemtoReg || cpu->ctrl.alu_op == ALU_SLT) ? rt : rd;
+        // For I-type: write to rt. For R-type: write to rd.
+        uint8_t dest_reg = cpu->ctrl.ALUSrc ? rt : rd;
         reg_write(&cpu->regs, dest_reg, alu_result);
     }
 

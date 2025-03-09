@@ -6,7 +6,7 @@
 #include "memory.h"
 #include "control.h"
 
-typedef sruct {
+typedef struct {
     RegisterFile regs;
     Memory mem;
     uint32_t pc;

@@ -26,8 +26,7 @@ void cpu_step(CPU *cpu) {
     uint32_t target = instr & 0x03FFFFFF; // 25-0 (J-type instr)
 
     // need sign extension for immediates
-    int32_t imm_ext = (imm & 0x8000) ? (0xFFFF0000 | imm) : imm;
-    
+    int32_t imm_ext = (int32_t)((int16_t)imm);    
     // read register values
     uint32_t a = reg_read(&cpu->regs, rs);
     uint32_t b = reg_read(&cpu->regs, rt);
@@ -52,20 +51,28 @@ void cpu_step(CPU *cpu) {
         // For I-type: write to rt. For R-type: write to rd.
         uint8_t dest_reg = cpu->ctrl.ALUSrc ? rt : rd;
         reg_write(&cpu->regs, dest_reg, alu_result);
+        printf("RegWrite: %d → $%d = 0x%08X\n\n", cpu->ctrl.RegWrite, dest_reg, alu_result);
+
     }
 
     // update program counter
     uint32_t next_pc = cpu->pc + 4; // default for sequential instrs
 
-    if (cpu->ctrl.Branch && zero_flag) {
-        next_pc = cpu->pc + 4 + (imm_ext << 2); // branch offset is imm << 2 word aligned
-
+    if (cpu->ctrl.Branch && !zero_flag) {  // bne branches when NOT zero
+        int16_t offset = (int16_t)(imm & 0xFFFF);
+        next_pc = cpu->pc + 4 + (offset << 2);
     } else if (cpu->ctrl.Jump) {
         // jump target (world aligned) : (pc + 4 upper 4-bits) | target << 2
         next_pc = (cpu->pc + 4) & 0xF0000000;
         next_pc |= (target << 2);
     } 
     cpu->pc = next_pc;
+
+    // In cpu_step():
+printf("PC=0x%08X: Instr=0x%08X\n", cpu->pc, instr);
+printf("Decoded: rs=%d, rt=%d, imm=0x%04X (ext=0x%08X)\n", rs, rt, imm, imm_ext);
+printf("ALU: a=0x%08X, b=0x%08X, op=%d → result=0x%08X, zero=%d\n", a, alu_b, cpu->ctrl.alu_op, alu_result, zero_flag);
+printf("Branch: %d, Jump: %d, Next PC=0x%08X\n", cpu->ctrl.Branch, cpu->ctrl.Jump, next_pc);
 }   
 
 void cpu_run(CPU *cpu) {

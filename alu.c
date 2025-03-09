@@ -43,8 +43,7 @@ uint32_t alu_execute(uint32_t a, uint32_t b, ALUOp f, uint32_t *zero) {
         
         case ALU_SUB:
             // two's complement: a - b = a + (-b) + 1
-            y = adder_32bit(a, ~b);
-            y = adder_32bit(y, 1);
+            y = a - b;
             break;
 
         case ALU_SLT:

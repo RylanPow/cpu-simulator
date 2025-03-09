@@ -70,6 +70,19 @@ ControlSignals control_decode(uint32_t instruction) {
             break;
         }
 
+        // bne
+        case 0x05: {
+            ctrl.RegWrite = 0;
+            ctrl.ALUSrc = 0;
+            ctrl.MemtoReg = 0;  // don’t care
+            ctrl.MemRead = 0;
+            ctrl.MemWrite = 0;
+            ctrl.Branch = 1;
+            ctrl.Jump = 0;
+            ctrl.alu_op = ALU_SUB; 
+            break;
+        }
+
         // addi
         case 0x08: {
             ctrl.RegWrite = 1;
